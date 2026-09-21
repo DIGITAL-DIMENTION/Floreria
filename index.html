@@ -255,7 +255,7 @@ function items() { return FLOWERS.filter(f => f.Disponible && qty[f.id] > 0); }
 function calc() {
   const cat = mode === "cat";
   let t = Number($("#wrapG input:checked").dataset.p) + ($("#rib").checked ? 15 : 0) + ($("#card").checked ? 20 : 0);
-  if (cat && pick) t += pick.Precio;
+  if (cat && pick) t += Number(pick.Precio) || 0;
   $("#tot").textContent = money(t);
   $("#picked").textContent = cat ? (pick ? "Ramo elegido: " + pick.Nombre : "Aún no eliges un ramo") : "Ramo armado por ti";
   $("#tnote").textContent = cat ? "Incluye el ramo (precio aproximado) y los extras. La florista confirma el precio final." : "Solo incluye los extras (envoltura, listón y tarjeta). La florista te dice el precio de las flores por WhatsApp.";
