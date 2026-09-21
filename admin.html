@@ -129,7 +129,8 @@ nav.nv .btn:hover{color:#fff}
 .pk{display:flex;gap:14px;align-items:center}
 .pkp{width:84px;height:112px;border-radius:14px;overflow:hidden;background:var(--pink);display:grid;place-items:center;font-size:44px;flex:none}
 .pkp img{width:100%;height:100%;object-fit:cover}
-.inv{display:grid;grid-template-columns:auto 1fr auto auto auto;gap:8px 10px;align-items:center}
+.inv{display:grid;grid-template-columns:auto auto 1fr auto auto auto;gap:8px 10px;align-items:center}
+.inv .em{width:52px;padding:8px;text-align:center;font-size:18px}
 .inv .h{font-size:12px;color:var(--mute);font-weight:600;padding-bottom:2px}
 .inv input[type=number]{width:78px;padding:8px}
 .gasto{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-weight:700;color:var(--brown)}
@@ -146,7 +147,8 @@ h3{font-size:20px;margin:26px 0 4px}
 .rowline{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
 .rowline:last-child{border:0}
 .rowline b{flex:1;min-width:0}
-.inv{display:grid;grid-template-columns:auto 1fr auto auto auto;gap:8px 10px;align-items:center}
+.inv{display:grid;grid-template-columns:auto auto 1fr auto auto auto;gap:8px 10px;align-items:center}
+.inv .em{width:52px;padding:8px;text-align:center;font-size:18px}
 .inv .h{font-size:12px;color:var(--mute);font-weight:600;padding-bottom:2px}
 .inv input[type=number]{width:78px;padding:8px}
 .gasto{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-weight:700;color:var(--brown)}
@@ -226,26 +228,28 @@ let FLOWERS = [], RAMOS = [];
 function renderFl() {
   const gasto = FLOWERS.reduce((s, f) => s + (Number(f.Cantidad) || 0) * (Number(f.Costo) || 0), 0);
   $("#flPanel").innerHTML = `<div class="inv">
-    <span class="h"></span><span class="h">Flor</span><span class="h">Cantidad</span><span class="h">Costo x unidad</span><span class="h"></span>
+    <span class="h"></span><span class="h">Emoji</span><span class="h">Flor</span><span class="h">Cantidad</span><span class="h">Costo x unidad</span><span class="h"></span>
     ${FLOWERS.map(f => `
     <input type="checkbox" data-a="on" data-id="${f.id}" ${f.Disponible ? "checked" : ""} aria-label="Disponible hoy: ${esc(f.Nombre)}">
-    <span>${esc(f.Emoji || "🌸")} ${esc(f.Nombre)}</span>
+    <input class="em" type="text" maxlength="4" data-a="emoji" data-id="${f.id}" value="${esc(f.Emoji || "🌸")}" aria-label="Emoji de ${esc(f.Nombre)}">
+    <span>${esc(f.Nombre)}</span>
     <input type="number" min="0" data-a="stock" data-id="${f.id}" value="${f.Cantidad || 0}" aria-label="Cantidad de ${esc(f.Nombre)}">
     <input type="number" min="0" step="0.5" data-a="cost" data-id="${f.id}" value="${f.Costo || 0}" aria-label="Costo por unidad de ${esc(f.Nombre)}">
     <button class="btn o" data-a="del" data-id="${f.id}" style="padding:8px 14px">Quitar</button>`).join("")}
   </div>
   <p class="gasto">Gasto total de la última surtida: ${money(gasto)}</p>
-  <div style="display:flex;gap:8px;margin-top:14px"><input id="nn" placeholder="Nueva flor" style="flex:1"><button class="btn" id="add">Agregar</button></div>
+  <div style="display:flex;gap:8px;margin-top:14px"><input id="ne" class="em" maxlength="4" value="🌸" style="flex:none" aria-label="Emoji de la nueva flor"><input id="nn" placeholder="Nueva flor" style="flex:1"><button class="btn" id="add">Agregar</button></div>
   <p id="fmsg" hidden></p>`;
   $("#add").onclick = async () => {
     const n = $("#nn").value.trim(); if (!n) return;
-    try { await brPost(T_FLORES, { Nombre: n, Emoji: "🌸", Disponible: true, Cantidad: 0, Costo: 0 }); $("#nn").value = ""; await loadFl(); }
+    try { await brPost(T_FLORES, { Nombre: n, Emoji: $("#ne").value.trim() || "🌸", Disponible: true, Cantidad: 0, Costo: 0 }); $("#nn").value = ""; $("#ne").value = "🌸"; await loadFl(); }
     catch { flag("#fmsg", "No se pudo agregar. Intenta de nuevo.", true); }
   };
   $("#flPanel").addEventListener("change", async e => {
     const t = e.target, f = FLOWERS.find(x => x.id == t.dataset.id); if (!f) return;
     const body = {};
     if (t.dataset.a === "on") body.Disponible = t.checked;
+    if (t.dataset.a === "emoji") body.Emoji = t.value.trim() || "🌸";
     if (t.dataset.a === "stock") body.Cantidad = Number(t.value) || 0;
     if (t.dataset.a === "cost") body.Costo = Number(t.value) || 0;
     try { await brPatch(T_FLORES, f.id, body); Object.assign(f, body); if (t.dataset.a !== "on") renderFl(); }
