@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Panel de la florista</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+
+:root{--bg:#fff7f5;--card:#fff;--ink:#4a2f25;--mute:#8a6a5b;--pink:#f9d9e0;--pink2:#fdeef1;--brown:#8b5a44;--line:#efd8d0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#2b1e19;--card:#38271f;--ink:#fbeae6;--mute:#d2b3a6;--pink:#5a3540;--pink2:#43292f;--brown:#e0a98f;--line:#55392f}}
+:root[data-theme="dark"]{--bg:#2b1e19;--card:#38271f;--ink:#fbeae6;--mute:#d2b3a6;--pink:#5a3540;--pink2:#43292f;--brown:#e0a98f;--line:#55392f}
+html{scroll-padding-top:calc(76px + env(safe-area-inset-top,0px));scroll-behavior:smooth}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.6 "Nunito Sans",system-ui,sans-serif}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;line-height:1.15;margin:0}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+section{padding:56px 0}
+h2{font-size:clamp(26px,4vw,36px);margin-bottom:6px}
+.sub{color:var(--mute);margin:0 0 24px}
+.hero{position:relative;min-height:430px;display:flex;align-items:center;color:#fff}
+.bg{position:absolute;inset:0;overflow:hidden;container-type:size}
+.bg div{position:absolute;inset:-0.8cqmin;filter:blur(0.4cqmin);background-color:#FF5F6D;background-image:linear-gradient(120deg,#FF5F6D 0%,#FFC371 100%)}
+.hero .wrap{position:relative;padding-top:40px;padding-bottom:40px}
+.hero h1{font-size:clamp(38px,8vw,72px);max-width:12ch;text-shadow:0 2px 18px rgba(139,60,40,.35)}
+.hero p{max-width:44ch;font-size:18px;text-shadow:0 1px 10px rgba(139,60,40,.4)}
+.btn{display:inline-block;border:0;border-radius:999px;padding:12px 24px;font:600 15px "Nunito Sans",sans-serif;cursor:pointer;background:var(--brown);color:var(--bg);text-decoration:none;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(139,90,68,.3)}
+.btn.w{background:#fff;color:#8b3d2c}
+.btn.o{background:transparent;color:var(--brown);border:1.5px solid var(--brown)}
+:focus-visible{outline:3px solid #ff5f6d;outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{background:var(--pink);border-radius:16px;padding:10px 16px;display:flex;gap:8px;align-items:center}
+.chip b{font-weight:600}
+.chip small{color:var(--mute)}
+.filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px}
+select,input,textarea{font:inherit;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;width:100%}
+.filters select{width:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;cursor:pointer;text-align:left;padding:0;color:inherit;font:inherit;animation:in .5s both;transition:transform .2s}
+.card:hover{transform:translateY(-4px)}
+.card .pic{height:140px;display:grid;place-items:center;font-size:64px;background:var(--pink)}
+.card .t{padding:14px 16px}
+.card h3{font-size:19px}
+.card p{margin:2px 0 0;color:var(--mute);font-size:14px}
+.price{color:var(--brown);font-weight:600}
+@keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.panel{background:var(--pink2);border:1px solid var(--line);border-radius:24px;padding:24px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border:0}
+.qty{display:flex;align-items:center;gap:10px}
+.qty button{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--brown);background:transparent;color:var(--brown);font-size:18px;cursor:pointer}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:760px){.two{grid-template-columns:1fr}}
+label{display:block;font-weight:600;font-size:14px;margin:12px 0 4px}
+.total{font:700 28px Fraunces,Georgia,serif;color:var(--brown)}
+.modal{position:fixed;inset:0;background:rgba(60,30,20,.55);display:none;place-items:center;padding:20px;z-index:1000}
+.modal.on{display:grid}
+.modal .box{background:var(--card);border-radius:24px;max-width:420px;width:100%;overflow-x:hidden;overflow-y:auto;max-height:92vh;animation:in .3s both}
+.modal .pic{aspect-ratio:4/5;max-height:50vh;overflow:hidden;display:grid;place-items:center;font-size:96px;background:var(--pink)}
+.modal .t{padding:20px}
+.toggle{display:flex;align-items:center;gap:8px;cursor:pointer}
+.toggle input{width:20px;height:20px;accent-color:#d9536a}
+.mini{width:84px}
+footer{text-align:center;padding:28px 20px 40px;color:var(--mute);font-size:14px}
+footer button{background:none;border:0;color:var(--mute);text-decoration:underline;cursor:pointer;font:inherit}
+.car{position:relative;overflow:hidden;margin:0 -20px;padding:10px 0}
+.stage{position:relative;isolation:isolate;height:330px;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:grab;outline-offset:-3px}
+.stage:active{cursor:grabbing}
+.sc{position:absolute;left:50%;top:50%;width:176px;height:240px;margin:-120px 0 0 -88px;border-radius:20px;overflow:hidden;background:var(--pink);box-shadow:0 10px 30px rgba(74,47,37,.25);will-change:transform}
+.sc img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;-webkit-user-drag:none}
+.sc .em{position:absolute;inset:0;display:grid;place-items:center;font-size:84px;padding-bottom:40px}
+.sc .sh{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.75),rgba(0,0,0,.15) 55%,transparent)}
+.sc .bd{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.95);color:#4a2f25;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600}
+.sc .tap{position:absolute;top:10px;left:10px;background:#ff5f6d;color:#fff;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600}
+.sc .ti{position:absolute;left:14px;right:14px;bottom:16px;color:#fff}
+.sc .ti b{display:block;font:700 17px Fraunces,Georgia,serif}
+.sc .ti small{opacity:.85}
+@media(min-width:640px){.stage{height:430px}.sc{width:224px;height:320px;margin:-160px 0 0 -112px}}
+@media(min-width:1024px){.stage{height:490px}.sc{width:256px;height:384px;margin:-192px 0 0 -128px}}
+.carinfo{display:flex;align-items:center;justify-content:center;gap:18px;text-align:center;margin-top:6px}
+.arr{padding:8px 16px;font-size:20px}
+.hint{text-align:center;color:var(--mute);font-size:14px;margin:8px 0 14px}
+.thumb{width:44px;height:44px;border-radius:10px;object-fit:cover;background:var(--pink);display:inline-grid;place-items:center;vertical-align:middle;margin-right:8px}
+.hg{display:grid;grid-template-columns:1.2fr .8fr;gap:32px;align-items:center;width:100%}
+.hp{width:100%;max-width:340px;height:auto;justify-self:center;border-radius:24px;border:4px solid #fff;box-shadow:0 16px 40px rgba(120,50,30,.35)}
+@media(max-width:760px){.hg{grid-template-columns:1fr}.hp{max-width:250px;justify-self:start}}
+.cs{position:relative;display:inline-block;min-width:170px}
+.panel .cs{display:block}
+.ct{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;height:42px;padding:0 14px;border:1.5px solid var(--line);border-radius:20px;background:var(--card);color:var(--ink);font:inherit;font-size:15px;cursor:pointer;transition:background .1s}
+.ct:hover{background:var(--pink2)}
+.cl{flex:1;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cp{position:absolute;left:0;top:calc(100% + 6px);min-width:100%;width:max-content;max-height:280px;overflow-y:auto;z-index:30;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:4px;box-shadow:0 8px 28px rgba(60,30,20,.2);animation:pop .12s both}
+@keyframes pop{from{opacity:0;transform:translateY(-4px) scaleY(.96)}}
+.ci{position:relative;z-index:1;display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:16px;cursor:pointer;font-size:14px;color:var(--mute)}
+.ci.on{background:var(--pink2)}
+.ci.on,.ci.act{color:var(--ink)}
+.ck{margin-left:auto;width:16px;height:16px;padding-left:8px;box-sizing:content-box}
+.hl{position:absolute;left:4px;right:4px;border-radius:16px;background:var(--pink);opacity:0;transition:top .09s,height .09s,opacity .08s;pointer-events:none}
+.rg{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.rad{display:flex;align-items:center;gap:10px;margin:0;padding:7px 0;font-weight:400;font-size:15px;cursor:pointer}
+.rad input{-webkit-appearance:none;appearance:none;width:18px;height:18px;padding:0;margin:0;flex:none;border:2px solid var(--brown);border-radius:50%;background:transparent;display:grid;place-items:center;cursor:pointer}
+.rad input::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--brown);transform:scale(0);transition:transform .12s}
+.rad input:checked::after{transform:scale(1)}
+.hero2{position:relative;min-height:100vh;min-height:100svh;display:grid;place-items:center;color:#fff;overflow:hidden;text-align:center;padding:96px 20px 90px}
+.hero2 .hbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 65%;image-rendering:auto}
+@media(max-width:700px){.hero2 .hbg{object-position:40% center}}
+.hero2 .hov{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(35,15,40,.5),rgba(35,15,40,.1) 70%),linear-gradient(to bottom,rgba(35,15,40,.3),rgba(35,15,40,.05) 40%,rgba(35,15,40,.4))}
+.hero2 .in{position:relative;max-width:760px}
+.pill{display:inline-block;background:rgba(255,255,255,.25);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.4);border-radius:999px;padding:5px 14px;font-size:13px;font-weight:600;color:#fff;text-decoration:none}
+.hero2 h1{font-size:clamp(40px,8vw,84px);margin:0 0 14px;text-shadow:0 2px 24px rgba(30,10,30,.45)}
+.hero2 p{font-size:clamp(16px,2.2vw,20px);margin:0 auto 26px;max-width:46ch;text-shadow:0 1px 12px rgba(30,10,30,.5)}
+.go{display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+.lnk{color:#fff;font-weight:600;text-decoration:none;text-shadow:0 1px 10px rgba(30,10,30,.5)}
+.lnk:hover{text-decoration:underline}
+.scr{position:absolute;bottom:calc(24px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);font-size:12px;letter-spacing:.2em}
+nav.nv{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:50;display:flex;align-items:center;gap:22px;background:rgba(255,255,255,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:999px;padding:8px 10px 8px 20px;box-shadow:0 6px 24px rgba(40,20,30,.18);max-width:calc(100% - 24px);white-space:nowrap}
+nav.nv b{font:700 17px Fraunces,Georgia,serif;color:#4a2f25}
+.ls{display:flex;gap:22px}
+nav.nv a{color:#4a2f25;text-decoration:none;font-size:14px;font-weight:600}
+nav.nv a:hover{color:#d9536a}
+nav.nv .btn{background:#4a2f25;color:#fff;padding:9px 20px}
+nav.nv .btn:hover{color:#fff}
+@media(max-width:620px){.ls{display:none}nav.nv{gap:16px}}
+.tabs{display:flex;gap:6px;background:var(--pink);border-radius:999px;padding:4px;margin-bottom:14px}
+.tabs button{flex:1;border:0;border-radius:999px;padding:9px 10px;font:600 14px "Nunito Sans",sans-serif;background:transparent;color:var(--ink);cursor:pointer;transition:background .15s}
+.tabs button[aria-selected="true"]{background:var(--brown);color:var(--bg)}
+.pk{display:flex;gap:14px;align-items:center}
+.pkp{width:84px;height:112px;border-radius:14px;overflow:hidden;background:var(--pink);display:grid;place-items:center;font-size:44px;flex:none}
+.pkp img{width:100%;height:100%;object-fit:cover}
+.inv{display:grid;grid-template-columns:auto 1fr auto auto auto;gap:8px 10px;align-items:center}
+.inv .h{font-size:12px;color:var(--mute);font-weight:600;padding-bottom:2px}
+.inv input[type=number]{width:78px;padding:8px}
+.gasto{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-weight:700;color:var(--brown)}
+[hidden]{display:none!important}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+body{padding:20px 0 60px}
+.wrap{max-width:760px}
+.gate{max-width:340px;margin:20vh auto 0;text-align:center}
+.gate h1{font-size:24px;margin-bottom:6px}
+.gate input{text-align:center;font-size:20px;letter-spacing:.3em;margin:14px 0}
+h3{font-size:20px;margin:26px 0 4px}
+.thumb2{width:56px;height:56px;border-radius:12px;object-fit:cover;background:var(--pink);display:inline-grid;place-items:center;vertical-align:middle;margin-right:10px;flex:none}
+.rowline{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.rowline:last-child{border:0}
+.rowline b{flex:1;min-width:0}
+.inv{display:grid;grid-template-columns:auto 1fr auto auto auto;gap:8px 10px;align-items:center}
+.inv .h{font-size:12px;color:var(--mute);font-weight:600;padding-bottom:2px}
+.inv input[type=number]{width:78px;padding:8px}
+.gasto{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-weight:700;color:var(--brown)}
+.msg{font-size:13px;border-radius:12px;padding:8px 12px;margin:8px 0 0}
+.msg.ok{background:#e5f3e6;color:#2e6b32}
+.msg.bad{background:#fdeef1;color:#a33}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<div class="gate" id="gate">
+  <h1>🌸 Panel de la florista</h1>
+  <p class="sub">Escribe tu PIN para entrar.</p>
+  <input id="pin" type="password" inputmode="numeric" autocomplete="off" placeholder="••••">
+  <button class="btn" id="enter" style="width:100%">Entrar</button>
+  <p id="gerr" class="msg bad" hidden></p>
+</div>
+
+<div id="panel" hidden>
+  <h1 style="margin-bottom:4px">Panel de la florista</h1>
+  <p class="sub">Los cambios se guardan para todos los que visiten la página.</p>
+
+  <h3>Flores del día e inventario</h3>
+  <p class="sub" style="font-size:14px">Activa las flores que llegaron hoy y anota cuánto surtiste y a qué costo.</p>
+  <div class="panel" id="flPanel"><p class="sub">Cargando…</p></div>
+
+  <h3>Ramos del catálogo</h3>
+  <div class="panel">
+    <div id="rmPanel"><p class="sub">Cargando…</p></div>
+    <div style="display:grid;gap:8px;margin-top:14px">
+      <input id="rn" placeholder="Nombre del ramo">
+      <select id="ro"><option>Amor</option><option>Cumpleaños</option><option>Agradecimiento</option><option>Condolencias</option></select>
+      <input id="rt" placeholder="Flor principal (ej. Rosas)">
+      <input id="rp" type="number" min="0" placeholder="Precio aproximado">
+      <textarea id="rd" rows="2" placeholder="Descripción"></textarea>
+      <label style="margin:0">Foto del ramo <input id="rf" type="file" accept="image/*"></label>
+      <small style="color:var(--mute)">La foto se recorta sola al tamaño del recuadro (vertical). Procura que el ramo quede al centro.</small>
+      <button class="btn" id="radd">Agregar ramo</button>
+      <p id="rmsg" hidden></p>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+const BR_BASE = "https://api.baserow.io/api/database/rows/table/";
+const UPLOAD_URL = "https://api.baserow.io/api/user-files/upload-file/";
+const T_FLORES = "1212172";
+const T_RAMOS = "1212861";
+const BR_TOKEN = "KdAIw6tWK70RIOmSxXuyv86LAQDtsehO";
+const PIN_HASH = "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4"; // hash del PIN "1234". Para cambiar el PIN, pídeme que te dé el hash del nuevo número.
+async function sha256(text) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+const H = { Authorization: "Token " + BR_TOKEN };
+const HJ = { Authorization: "Token " + BR_TOKEN, "Content-Type": "application/json" };
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const money = n => "$" + Number(n).toLocaleString("es-MX");
+async function brList(id) { const r = await fetch(BR_BASE + id + "/?user_field_names=true&size=200", { headers: H }); if (!r.ok) throw 0; return (await r.json()).results; }
+async function brPatch(id, rowId, body) { const r = await fetch(BR_BASE + id + "/" + rowId + "/?user_field_names=true", { method: "PATCH", headers: HJ, body: JSON.stringify(body) }); if (!r.ok) throw 0; return r.json(); }
+async function brPost(id, body) { const r = await fetch(BR_BASE + id + "/?user_field_names=true", { method: "POST", headers: HJ, body: JSON.stringify(body) }); if (!r.ok) throw 0; return r.json(); }
+async function brDelete(id, rowId) { const r = await fetch(BR_BASE + id + "/" + rowId + "/", { method: "DELETE", headers: H }); if (!r.ok) throw 0; }
+
+$("#enter").onclick = async () => {
+  if ((await sha256($("#pin").value)) === PIN_HASH) { $("#gate").hidden = true; $("#panel").hidden = false; boot(); }
+  else { $("#gerr").textContent = "PIN incorrecto."; $("#gerr").hidden = false; }
+};
+$("#pin").addEventListener("keydown", e => { if (e.key === "Enter") $("#enter").click(); });
+
+let FLOWERS = [], RAMOS = [];
+
+function renderFl() {
+  const gasto = FLOWERS.reduce((s, f) => s + (Number(f.Cantidad) || 0) * (Number(f.Costo) || 0), 0);
+  $("#flPanel").innerHTML = `<div class="inv">
+    <span class="h"></span><span class="h">Flor</span><span class="h">Cantidad</span><span class="h">Costo x unidad</span><span class="h"></span>
+    ${FLOWERS.map(f => `
+    <input type="checkbox" data-a="on" data-id="${f.id}" ${f.Disponible ? "checked" : ""} aria-label="Disponible hoy: ${esc(f.Nombre)}">
+    <span>${esc(f.Emoji || "🌸")} ${esc(f.Nombre)}</span>
+    <input type="number" min="0" data-a="stock" data-id="${f.id}" value="${f.Cantidad || 0}" aria-label="Cantidad de ${esc(f.Nombre)}">
+    <input type="number" min="0" step="0.5" data-a="cost" data-id="${f.id}" value="${f.Costo || 0}" aria-label="Costo por unidad de ${esc(f.Nombre)}">
+    <button class="btn o" data-a="del" data-id="${f.id}" style="padding:8px 14px">Quitar</button>`).join("")}
+  </div>
+  <p class="gasto">Gasto total de la última surtida: ${money(gasto)}</p>
+  <div style="display:flex;gap:8px;margin-top:14px"><input id="nn" placeholder="Nueva flor" style="flex:1"><button class="btn" id="add">Agregar</button></div>
+  <p id="fmsg" hidden></p>`;
+  $("#add").onclick = async () => {
+    const n = $("#nn").value.trim(); if (!n) return;
+    try { await brPost(T_FLORES, { Nombre: n, Emoji: "🌸", Disponible: true, Cantidad: 0, Costo: 0 }); $("#nn").value = ""; await loadFl(); }
+    catch { flag("#fmsg", "No se pudo agregar. Intenta de nuevo.", true); }
+  };
+  $("#flPanel").addEventListener("change", async e => {
+    const t = e.target, f = FLOWERS.find(x => x.id == t.dataset.id); if (!f) return;
+    const body = {};
+    if (t.dataset.a === "on") body.Disponible = t.checked;
+    if (t.dataset.a === "stock") body.Cantidad = Number(t.value) || 0;
+    if (t.dataset.a === "cost") body.Costo = Number(t.value) || 0;
+    try { await brPatch(T_FLORES, f.id, body); Object.assign(f, body); if (t.dataset.a !== "on") renderFl(); }
+    catch { flag("#fmsg", "No se pudo guardar ese cambio. Revisa tu conexión.", true); }
+  });
+  $("#flPanel").addEventListener("click", async e => {
+    const b = e.target.closest("[data-a=del]"); if (!b) return;
+    try { await brDelete(T_FLORES, b.dataset.id); await loadFl(); } catch { flag("#fmsg", "No se pudo quitar.", true); }
+  });
+}
+function flag(sel, text, bad) { const p = $(sel); p.textContent = text; p.className = "msg " + (bad ? "bad" : "ok"); p.hidden = false; setTimeout(() => p.hidden = true, 2500); }
+
+function renderRm() {
+  $("#rmPanel").innerHTML = RAMOS.length ? RAMOS.map(r => `<div class="rowline">${r.Foto && r.Foto[0] ? `<img class="thumb2" src="${r.Foto[0].url}" alt="">` : `<span class="thumb2">💐</span>`}<b>${esc(r.Nombre)} <small style="color:var(--mute)">— ${esc(r.Ocasion)}, ${money(r.Precio)}</small></b><button class="btn o" data-r="${r.id}" style="padding:8px 14px">Quitar</button></div>`).join("") : "<p class='sub'>Aún no hay ramos.</p>";
+  $("#rmPanel").addEventListener("click", async e => {
+    const b = e.target.closest("[data-r]"); if (!b) return;
+    try { await brDelete(T_RAMOS, b.dataset.r); await loadRm(); } catch { flag("#rmsg", "No se pudo quitar.", true); }
+  });
+}
+async function uploadPhoto(file) {
+  const fd = new FormData(); fd.append("file", file);
+  const r = await fetch(UPLOAD_URL, { method: "POST", headers: H, body: fd });
+  if (!r.ok) throw 0; return r.json();
+}
+function cropToRect(file) {
+  return new Promise((ok, no) => {
+    const fr = new FileReader();
+    fr.onload = () => {
+      const im = new Image();
+      im.onload = () => {
+        const R = 2 / 3; let sw = im.width, sh = im.height;
+        if (sw / sh > R) sw = sh * R; else sh = sw / R;
+        const ow = Math.min(640, Math.round(sw)), oh = Math.round(ow / R), c = document.createElement("canvas");
+        c.width = ow; c.height = oh;
+        c.getContext("2d").drawImage(im, (im.width - sw) / 2, (im.height - sh) / 2, sw, sh, 0, 0, ow, oh);
+        c.toBlob(b => ok(new File([b], "ramo.jpg", { type: "image/jpeg" })), "image/jpeg", .85);
+      };
+      im.onerror = no; im.src = fr.result;
+    };
+    fr.onerror = no; fr.readAsDataURL(file);
+  });
+}
+$("#radd").onclick = async () => {
+  const n = $("#rn").value.trim(), p = Number($("#rp").value), f = $("#rf").files[0];
+  if (!n || !p) { flag("#rmsg", "Escribe el nombre y el precio aproximado.", true); return; }
+  try {
+    const body = { Nombre: n, Ocasion: $("#ro").value, Flor_principal: $("#rt").value.trim(), Precio: p, Descripcion: $("#rd").value.trim() };
+    if (f) { const cropped = await cropToRect(f); const up = await uploadPhoto(cropped); body.Foto = [{ name: up.name }]; }
+    await brPost(T_RAMOS, body);
+    ["#rn", "#rt", "#rp", "#rd", "#rf"].forEach(x => $(x).value = "");
+    await loadRm(); flag("#rmsg", "Ramo agregado.", false);
+  } catch { flag("#rmsg", "No se pudo agregar el ramo. Revisa tu conexión.", true); }
+};
+
+async function loadFl() { FLOWERS = await brList(T_FLORES); renderFl(); }
+async function loadRm() { RAMOS = await brList(T_RAMOS); renderRm(); }
+async function boot() {
+  try { await Promise.all([loadFl(), loadRm()]); }
+  catch { $("#flPanel").innerHTML = "<p class='err'>No se pudo conectar con la base de datos.</p>"; }
+}
+</script>
+</body>
+</html>
