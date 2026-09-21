@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Florería Pétalos</title>
+<title>Florería Lirios</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet">
 <style>
 
@@ -123,7 +123,15 @@ nav.nv a{color:#4a2f25;text-decoration:none;font-size:14px;font-weight:600}
 nav.nv a:hover{color:#d9536a}
 nav.nv .btn{background:#4a2f25;color:#fff;padding:9px 20px}
 nav.nv .btn:hover{color:#fff}
-@media(max-width:620px){.ls{display:none}nav.nv{gap:16px}}
+.menuBtn{display:none;background:none;border:0;font-size:20px;line-height:1;color:#4a2f25;cursor:pointer;padding:6px}
+@media(max-width:620px){
+  .menuBtn{display:inline-flex}
+  .ls{display:none;position:absolute;top:calc(100% + 8px);left:0;right:0;flex-direction:column;gap:2px;background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-radius:20px;padding:8px;box-shadow:0 10px 30px rgba(40,20,30,.2)}
+  .ls.open{display:flex}
+  .ls a{padding:11px 14px;border-radius:12px}
+  .ls a:hover{background:var(--pink2)}
+  nav.nv{gap:12px}
+}
 .tabs{display:flex;gap:6px;background:var(--pink);border-radius:999px;padding:4px;margin-bottom:14px}
 .tabs button{flex:1;border:0;border-radius:999px;padding:9px 10px;font:600 14px "Nunito Sans",sans-serif;background:transparent;color:var(--ink);cursor:pointer;transition:background .15s}
 .tabs button[aria-selected="true"]{background:var(--brown);color:var(--bg)}
@@ -140,8 +148,9 @@ nav.nv .btn:hover{color:#fff}
 <body>
 
 <nav class="nv" aria-label="Principal">
-  <b>🌸 Pétalos</b>
-  <span class="ls"><a href="#hoy">Flores del día</a><a href="#catalogo">Ramos</a><a href="#armar">Armar</a></span>
+  <b>🌸 Lirios</b>
+  <button class="menuBtn" id="menuBtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="navLinks">☰</button>
+  <span class="ls" id="navLinks"><a href="#hoy">Flores del día</a><a href="#catalogo">Ramos</a><a href="#armar" data-mode="mine">Armar</a></span>
   <a class="btn" href="#armar">Pedir</a>
 </nav>
 <header class="hero2">
@@ -216,7 +225,7 @@ nav.nv .btn:hover{color:#fff}
   </div>
 </div></section>
 
-<footer>Florería Pétalos · Puebla</footer>
+<footer>Florería Lirios · Puebla</footer>
 
 <div class="modal" id="modal" role="dialog" aria-modal="true"><div class="box">
   <div class="pic" id="mPic"></div>
@@ -392,6 +401,12 @@ async function boot() {
   }
 }
 setMode("mine"); boot();
+$("#menuBtn").onclick = () => {
+  const open = $("#navLinks").classList.toggle("open");
+  $("#menuBtn").setAttribute("aria-expanded", open);
+};
+document.querySelectorAll("#navLinks a").forEach(a => a.addEventListener("click", () => { $("#navLinks").classList.remove("open"); $("#menuBtn").setAttribute("aria-expanded", "false"); }));
+document.addEventListener("click", e => { if (!e.target.closest("nav.nv")) { $("#navLinks").classList.remove("open"); $("#menuBtn").setAttribute("aria-expanded", "false"); } });
 </script>
 </body>
 </html>
