@@ -207,6 +207,7 @@ async function sha256(text) {
 const H = { Authorization: "Token " + BR_TOKEN };
 const HJ = { Authorization: "Token " + BR_TOKEN, "Content-Type": "application/json" };
 const $ = s => document.querySelector(s);
+const occ = v => (v && typeof v === "object") ? (v.value ?? "") : (v || "");
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const money = n => "$" + Number(n).toLocaleString("es-MX");
 async function brList(id) { const r = await fetch(BR_BASE + id + "/?user_field_names=true&size=200", { headers: H }); if (!r.ok) throw 0; return (await r.json()).results; }
@@ -258,7 +259,7 @@ function renderFl() {
 function flag(sel, text, bad) { const p = $(sel); p.textContent = text; p.className = "msg " + (bad ? "bad" : "ok"); p.hidden = false; setTimeout(() => p.hidden = true, 2500); }
 
 function renderRm() {
-  $("#rmPanel").innerHTML = RAMOS.length ? RAMOS.map(r => `<div class="rowline">${r.Foto && r.Foto[0] ? `<img class="thumb2" src="${r.Foto[0].url}" alt="">` : `<span class="thumb2">💐</span>`}<b>${esc(r.Nombre)} <small style="color:var(--mute)">— ${esc(r.Ocasion)}, ${money(r.Precio)}</small></b><button class="btn o" data-r="${r.id}" style="padding:8px 14px">Quitar</button></div>`).join("") : "<p class='sub'>Aún no hay ramos.</p>";
+  $("#rmPanel").innerHTML = RAMOS.length ? RAMOS.map(r => `<div class="rowline">${r.Foto && r.Foto[0] ? `<img class="thumb2" src="${r.Foto[0].url}" alt="">` : `<span class="thumb2">💐</span>`}<b>${esc(r.Nombre)} <small style="color:var(--mute)">— ${esc(occ(r.Ocasion))}, ${money(r.Precio)}</small></b><button class="btn o" data-r="${r.id}" style="padding:8px 14px">Quitar</button></div>`).join("") : "<p class='sub'>Aún no hay ramos.</p>";
   $("#rmPanel").addEventListener("click", async e => {
     const b = e.target.closest("[data-r]"); if (!b) return;
     try { await brDelete(T_RAMOS, b.dataset.r); await loadRm(); } catch { flag("#rmsg", "No se pudo quitar.", true); }
