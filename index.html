@@ -236,6 +236,7 @@ async function brList(tableId) {
 }
 
 const $ = s => document.querySelector(s);
+const occ = v => (v && typeof v === "object") ? (v.value ?? "") : (v || "");
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const money = n => "$" + Number(n).toLocaleString("es-MX");
 let FLOWERS = [], RAMOS = [];
@@ -271,7 +272,7 @@ function fotoUrl(r) { return r.Foto && r.Foto[0] ? r.Foto[0].url : ""; }
 const cfg = () => { const w = innerWidth; return w < 640 ? {dd:120,vd:500,se:180,xm:90,ym:20,rm:8,sr:.06} : w < 1024 ? {dd:160,vd:650,se:220,xm:130,ym:30,rm:10,sr:.09} : {dd:200,vd:800,se:250,xm:170,ym:40,rm:12,sr:.12}; };
 const cur = () => list.length ? list[((Math.round(prog) % list.length) + list.length) % list.length] : null;
 function fillTipos() {
-  $("#fTipo").innerHTML = '<option value="">Todas las flores</option>' + [...new Set(RAMOS.map(r => r.Flor_principal).filter(Boolean))].map(t => `<option>${esc(t)}</option>`).join("");
+  $("#fTipo").innerHTML = '<option value="">Todas las flores</option>' + [...new Set(RAMOS.map(r => occ(r.Flor_principal)).filter(Boolean))].map(t => `<option>${esc(t)}</option>`).join("");
 }
 function layout() {
   const n = list.length, c = cfg(); if (!n) return;
@@ -285,7 +286,7 @@ function layout() {
     el.querySelector(".tap").style.opacity = a < .3 ? 1 : 0;
     el.querySelector(".ti").style.opacity = Math.max(0, 1 - a * 2);
   });
-  const r = cur(); $("#cN").textContent = r.Nombre; $("#cM").textContent = r.Ocasion + ", desde " + money(r.Precio);
+  const r = cur(); $("#cN").textContent = r.Nombre; $("#cM").textContent = occ(r.Ocasion) + ", desde " + money(r.Precio);
 }
 function to(target) {
   cancelAnimationFrame(anim);
@@ -302,16 +303,16 @@ function to(target) {
 function renderRamos() {
   const oc = $("#fOc").value, ti = $("#fTipo").value, pr = $("#fPr").value;
   const [a, b] = pr ? pr.split("-").map(Number) : [0, 1e9];
-  list = RAMOS.filter(r => (!oc || r.Ocasion === oc) && (!ti || r.Flor_principal === ti) && r.Precio >= a && r.Precio <= b);
+  list = RAMOS.filter(r => (!oc || occ(r.Ocasion) === oc) && (!ti || occ(r.Flor_principal) === ti) && r.Precio >= a && r.Precio <= b);
   cancelAnimationFrame(anim); prog = 0;
   $("#carBox").hidden = !list.length; $("#carEmpty").hidden = !!list.length;
-  $("#stage").innerHTML = list.map(r => { const img = fotoUrl(r); return `<div class="sc">${img ? `<img src="${img}" alt="${esc(r.Nombre)}" draggable="false">` : `<div class="em">💐</div>`}<div class="sh"></div><span class="bd">${esc(r.Ocasion)}</span><span class="tap">Toca para elegir</span><div class="ti"><b>${esc(r.Nombre)}</b><small>${money(r.Precio)}</small></div></div>`; }).join("");
+  $("#stage").innerHTML = list.map(r => { const img = fotoUrl(r); return `<div class="sc">${img ? `<img src="${img}" alt="${esc(r.Nombre)}" draggable="false">` : `<div class="em">💐</div>`}<div class="sh"></div><span class="bd">${esc(occ(r.Ocasion))}</span><span class="tap">Toca para elegir</span><div class="ti"><b>${esc(r.Nombre)}</b><small>${money(r.Precio)}</small></div></div>`; }).join("");
   layout();
 }
 function openModal(r) {
   const img = fotoUrl(r);
   $("#mPic").innerHTML = img ? `<img src="${img}" alt="" style="width:100%;height:100%;object-fit:cover">` : "💐";
-  $("#mN").textContent = r.Nombre; $("#mD").textContent = (r.Descripcion || "") + " Ocasión: " + r.Ocasion + ".";
+  $("#mN").textContent = r.Nombre; $("#mD").textContent = (r.Descripcion || "") + " Ocasión: " + occ(r.Ocasion) + ".";
   $("#mP").textContent = "Precio aproximado: " + money(r.Precio);
   $("#mPick").onclick = () => { pick = r; setMode("cat"); $("#modal").classList.remove("on"); $("#armar").scrollIntoView(); };
   $("#modal").classList.add("on");
@@ -349,7 +350,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape") $("#modal").
 
 function renderPick() {
   $("#mCat").innerHTML = pick
-    ? `<div class="pk"><div class="pkp">${fotoUrl(pick) ? `<img src="${fotoUrl(pick)}" alt="">` : "💐"}</div><div><b>${esc(pick.Nombre)}</b><br><small>${esc(pick.Ocasion)}, desde ${money(pick.Precio)}</small><br><a class="btn o" style="margin-top:8px;padding:8px 16px" href="#catalogo">Cambiar ramo</a></div></div>`
+    ? `<div class="pk"><div class="pkp">${fotoUrl(pick) ? `<img src="${fotoUrl(pick)}" alt="">` : "💐"}</div><div><b>${esc(pick.Nombre)}</b><br><small>${esc(occ(pick.Ocasion))}, desde ${money(pick.Precio)}</small><br><a class="btn o" style="margin-top:8px;padding:8px 16px" href="#catalogo">Cambiar ramo</a></div></div>`
     : `<p class="sub" style="margin-bottom:10px">Aún no eliges ningún ramo del catálogo.</p><a class="btn" href="#catalogo">Ver ramos</a>`;
 }
 function setMode(m) {
